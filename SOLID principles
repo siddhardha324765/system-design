@@ -1,0 +1,14 @@
+Single Responsibility Principle:
+   A class should have only one reason to change.
+
+Open/Closed Principle:
+   A class should be open for extension but closed for modification.
+
+Liskov Substitution Principle:
+   Objects of a child class should be replaceable with objects of their parent class without affecting the correctness of the program.
+
+Interface Segregation Principle: 
+   A class should not be forced to implement interfaces or methods it does not need; instead, use smaller, specific interfaces.
+
+Dependency Inversion Principle: 
+   High-level and low-level modules should depend on abstractions rather than directly depending on each other.
