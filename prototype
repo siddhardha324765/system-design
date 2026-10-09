@@ -1,0 +1,95 @@
+Prototype Design Pattern (Java)
+1. Definition
+
+The Prototype Design Pattern is a creational design pattern that creates new objects
+by copying an existing object (prototype), instead of creating them from scratch.
+
+When to use:
+
+Object creation is expensive.
+You want to create copies of existing objects.
+You want to avoid repeating complex initialization logic.
+
+2. Basic Java Example
+
+class Report implements Cloneable {
+    String college;
+    String department;
+
+    Report(String college, String department) {
+        this.college = college;
+        this.department = department;
+    }
+
+    @Override
+    public Report clone() {
+        try {
+            return (Report) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(e);
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Report original =
+            new Report("Aditya University", "CSE");
+
+        Report copy1 = original.clone();
+        Report copy2 = original.clone();
+
+        copy1.department = "AI&ML";
+
+        System.out.println(original.department);
+        System.out.println(copy1.department);
+        System.out.println(copy2.department);
+    }
+}
+
+Output:
+CSE
+AI&ML
+CSE
+
+Explanation:
+
+  implements Cloneable:     Allows cloning through Object.clone().
+  super.clone():            Creates a shallow copy of the object.
+  copy1 and copy2:          Separate objects copied from original.
+  Changing copy1.department does not change the other objects' fields.
+
+3. Shallow Copy vs. Deep Copy:
+Shallow Copy:
+
+  Creates a new outer object, but references to nested objects may be shared.
+  Report copy = original.clone();
+  
+Deep Copy:
+
+ Creates a new outer object and independently copies the nested mutable objects that need to be isolated.
+
+Remember: super.clone() alone creates a shallow copy, not a deep copy.
+
+4. Advantages
+     Avoids recreating complex objects from scratch.
+     Can reduce repeated initialization work.
+     Makes it easy to create variations of existing objects.
+5. Disadvantages
+     Deep copying nested objects can be complicated.
+     Shallow copying may accidentally share mutable state.
+     Java's Cloneable and clone() mechanism has design limitations.
+6. Real-World Examples
+    Copying document templates.
+    Duplicating preconfigured game characters.
+    Creating copies of configuration objects.
+    Duplicating existing graphical shapes.
+7. Interview Questions
+    What is the Prototype Design Pattern?
+    Why is Prototype called a creational design pattern?
+    What is the purpose of Cloneable?
+    What does super.clone() do?
+    What is the difference between shallow copy and deep copy?
+    Why doesn't super.clone() automatically deep-copy nested objects?
+    What happens if a class does not implement Cloneable?
+    What are the advantages and disadvantages of Prototype?
