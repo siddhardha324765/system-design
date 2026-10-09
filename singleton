@@ -1,0 +1,76 @@
+Non-Thread safe singleton
+
+we make constructor private so that we can't access it outside from it
+
+class DatabaseConnection {
+
+    private static DatabaseConnection obj;
+
+    private DatabaseConnection() {
+        System.out.println("Database connection created");
+    }
+
+    public static DatabaseConnection getInstance() {
+        if (obj == null) {
+            obj = new DatabaseConnection();
+        }
+        return obj;
+    }
+}
+
+Thread Safe Singleton
+
+class DatabaseConnection {
+
+    private static DatabaseConnection obj;
+
+    private DatabaseConnection() {
+        System.out.println("Database connection created");
+    }
+
+    public static synchronized DatabaseConnection getInstance() {
+        if (obj == null) {
+            obj = new DatabaseConnection();
+        }
+        return obj;
+    }
+}
+
+but when two thread's called once it fails
+
+double lock code for threads 
+
+class Singleton {
+    private static volatile Singleton obj;
+
+    private Singleton() {}
+
+    public static Singleton getInstance() {
+        if (obj == null) {
+            synchronized (Singleton.class) {
+                if (obj == null) {
+                    obj = new Singleton();
+                }
+            }
+        }
+        return obj;
+    }
+}
+
+A modern Java option: the Bill Pugh Singleton(besest thing we can do)
+
+class DatabaseConnection {
+
+    private DatabaseConnection() {
+        System.out.println("Database connection created");
+    }
+
+    private static class Holder {
+        private static final DatabaseConnection INSTANCE =
+                new DatabaseConnection();
+    }
+
+    public static DatabaseConnection getInstance() {
+        return Holder.INSTANCE;
+    }
+}
