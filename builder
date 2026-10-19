@@ -198,3 +198,28 @@ public class Burger {
         }
     }
 }
+public class Main {
+
+    public static void main(String[] args) {
+
+        Burger burger1 = new Burger.Builder("Sesame")
+                .cheese(true)
+                .lettuce(true)
+                .tomato(false)
+                .extraSauce(true)
+                .build();
+
+        System.out.println("Burger 1:");
+        burger1.display();
+
+        System.out.println();
+
+        Burger burger2 = new Burger.Builder("Whole Wheat")
+                .cheese(false)
+                .lettuce(true)
+                .build();
+
+        System.out.println("Burger 2:");
+        burger2.display();
+    }
+}
