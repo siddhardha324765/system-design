@@ -1,0 +1,203 @@
+# Registry Design Pattern in Java
+
+## 1. What is the Registry Pattern?
+
+The Registry Pattern is a design pattern that provides a centralized place to register objects and retrieve them using a key.
+
+It allows different parts of an application to find and reuse existing objects without needing to know how those objects were created or stored.
+
+## 2. Why was it introduced?
+
+Imagine a college management system with multiple classrooms.
+
+The booking system, maintenance system, and timetable system all need to access classroom information.
+
+Without a Registry, each component might create its own classroom object or require another component to pass the object reference to it.
+
+This can lead to duplicate objects, unnecessary object creation, and complicated dependencies.
+
+The Registry Pattern addresses the object discovery problem by maintaining a central directory of registered objects.
+
+**Core idea:** Instead of creating or searching for an object everywhere, register it once and retrieve it using a key.
+
+## 3. Real-World Example
+
+Consider a college with three classrooms:
+
+| Classroom ID | Name            | Equipment   |
+| ------------ | --------------- | ----------- |
+| C101         | Seminar Hall    | Projector   |
+| C102         | Computer Lab    | Smart Board |
+| C103         | Conference Room | Speaker     |
+
+The Classroom Registry stores these objects using their IDs.
+
+For example:
+
+- `register("C101", classroom1)` registers a classroom.
+- `getClassroom("C101")` retrieves the classroom.
+- `remove("C101")` removes its entry.
+
+## 4. Main Components
+
+### Classroom
+
+Represents a classroom and stores its ID, name, and equipment.
+
+### ClassroomRegistry
+
+Maintains a collection of classroom objects and provides methods to register, retrieve, and remove them.
+
+### Main Application
+
+Creates classroom objects, registers them, retrieves them when required, and demonstrates removal.
+
+## 5. Class Relationships
+
+- ClassroomRegistry has references to multiple Classroom objects.
+- Main uses ClassroomRegistry to access classrooms.
+- The registry uses classroom IDs as lookup keys.
+
+## 6. Working Flow
+
+1. Create the registry.
+2. Create classroom objects.
+3. Register the objects using unique IDs.
+4. Retrieve a classroom using its ID.
+5. Use the retrieved object.
+6. Remove the registry entry when required.
+
+## 7. Advantages
+
+- Centralized object lookup.
+- Reuse of registered objects.
+- Less need to pass object references through many components.
+- Separation between object lookup and object usage.
+- Convenient management of registered services or resources.
+
+## 8. Disadvantages
+
+- A global registry can create hidden dependencies.
+- Incorrect registration logic can overwrite existing entries.
+- A shared mutable registry may require thread-safety measures.
+- Excessive use can make testing and maintenance difficult.
+
+## 9. Registry vs Singleton
+
+| Registry Pattern                                        | Singleton Pattern                                               |
+| ------------------------------------------------------- | --------------------------------------------------------------- |
+| Manages access to registered objects.                   | Controls the number of instances of a class.                    |
+| Often uses a Map or Dictionary.                         | Commonly uses a private constructor and a static access method. |
+| Can store many objects.                                 | Provides one instance of a particular class.                    |
+| Does not inherently enforce a single registry instance. | Intended to enforce one instance.                               |
+
+A Registry can itself be implemented as a Singleton, but the two patterns solve different problems.
+
+## 10. Important Note
+
+The Registry Pattern is useful when components need to discover objects using keys. It is not always the best solution: dependency injection can be preferable when dependencies can be passed explicitly.
+
+**Summary:** Create objects → Register objects → Retrieve by key → Use objects → Remove entries when needed.
+
+
+------------------------------------------------       CODE    -----------------------------------------------------------------
+
+import java.util.HashMap;
+import java.util.Map;
+
+// Represents a classroom
+class Classroom {
+    private String classroomId;
+    private String roomName;
+    private String equipment;
+
+    public Classroom(String classroomId, String roomName,
+                     String equipment) {
+        this.classroomId = classroomId;
+        this.roomName = roomName;
+        this.equipment = equipment;
+    }
+
+    public void getDetails() {
+        System.out.println("ID: " + classroomId);
+        System.out.println("Room: " + roomName);
+        System.out.println("Equipment: " + equipment);
+    }
+}
+
+// Registry for managing classroom objects
+class ClassroomRegistry {
+
+    private final Map<String, Classroom> classrooms =
+            new HashMap<>();
+
+    public void register(String id, Classroom classroom) {
+        if (classrooms.containsKey(id)) {
+            throw new IllegalArgumentException(
+                    "Classroom ID already registered: " + id);
+        }
+
+        classrooms.put(id, classroom);
+        System.out.println(id + " registered");
+    }
+
+    public Classroom getClassroom(String id) {
+        return classrooms.get(id);
+    }
+
+    public void remove(String id) {
+        classrooms.remove(id);
+        System.out.println(id + " removed");
+    }
+}
+
+// Demonstrates the Registry Pattern
+public class Main {
+    public static void main(String[] args) {
+
+        ClassroomRegistry registry =
+                new ClassroomRegistry();
+
+        // Create classroom objects
+        Classroom c1 = new Classroom(
+                "C101", "Seminar Hall", "Projector");
+
+        Classroom c2 = new Classroom(
+                "C102", "Computer Lab", "Smart Board");
+
+        Classroom c3 = new Classroom(
+                "C103", "Conference Room", "Speaker");
+
+        // Register classrooms
+        registry.register("C101", c1);
+        registry.register("C102", c2);
+        registry.register("C103", c3);
+
+        // Retrieve and display a classroom
+        System.out.println("\nRetrieved classroom:");
+
+        Classroom room = registry.getClassroom("C102");
+
+        if (room != null) {
+            room.getDetails();
+        } else {
+            System.out.println("Classroom not found");
+        }
+
+        // Remove a classroom
+        System.out.println("\nRemoving classroom:");
+        registry.remove("C101");
+
+        // Try retrieving the removed entry
+        System.out.println("\nSearching for C101:");
+
+        Classroom removedRoom =
+                registry.getClassroom("C101");
+
+        if (removedRoom == null) {
+            System.out.println("Classroom not found");
+        } else {
+            removedRoom.getDetails();
+        }
+    }
+}
