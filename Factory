@@ -1,0 +1,153 @@
+# Factory Design Pattern in Java
+
+## 1. What is the Factory Design Pattern?
+
+The Factory Design Pattern is a creational design pattern that provides a centralized way to create objects without requiring the client to directly instantiate concrete classes.
+
+Instead of creating objects using `new` everywhere, we delegate object creation to a factory.
+
+## 2. Why Do We Need It?
+
+Imagine we are developing a payment application that supports UPI, Credit Card, and PayPal payments.
+
+Without a factory, the client must know which class to instantiate:
+
+```java
+UPIPayment payment = new UPIPayment();
+payment.pay();
+```
+
+If the payment method changes, the client code must also change. As the application grows, object creation logic can become scattered throughout the code.
+
+**Solution:** Create a `PaymentFactory` that handles object creation in one place.
+
+## 3. Class Structure
+
+- `Payment` — Common interface for all payment methods.
+- `UPIPayment` — Implements UPI payment.
+- `CreditCardPayment` — Implements credit card payment.
+- `PayPalPayment` — Implements PayPal payment.
+- `PaymentFactory` — Creates the required payment object.
+- `Main` — Requests an object from the factory and uses it.
+
+## 4. Implementation
+
+### Payment.java
+
+```java
+interface Payment {
+    void pay();
+}
+```
+
+### UPIPayment.java
+
+```java
+class UPIPayment implements Payment {
+    public void pay() {
+        System.out.println("Payment using UPI");
+    }
+}
+```
+
+### CreditCardPayment.java
+
+```java
+class CreditCardPayment implements Payment {
+    public void pay() {
+        System.out.println("Payment using Credit Card");
+    }
+}
+```
+
+### PayPalPayment.java
+
+```java
+class PayPalPayment implements Payment {
+    public void pay() {
+        System.out.println("Payment using PayPal");
+    }
+}
+```
+
+### PaymentFactory.java
+
+```java
+class PaymentFactory {
+    public static Payment createPayment(String type) {
+        if (type.equalsIgnoreCase("UPI")) {
+            return new UPIPayment();
+        } else if (type.equalsIgnoreCase("CreditCard")) {
+            return new CreditCardPayment();
+        } else if (type.equalsIgnoreCase("PayPal")) {
+            return new PayPalPayment();
+        }
+
+        throw new IllegalArgumentException("Invalid payment type");
+    }
+}
+```
+
+### Main.java
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Payment payment = PaymentFactory.createPayment("UPI");
+        payment.pay();
+
+        Payment payment2 = PaymentFactory.createPayment("CreditCard");
+        payment2.pay();
+
+        Payment payment3 = PaymentFactory.createPayment("PayPal");
+        payment3.pay();
+    }
+}
+```
+
+## 5. Output
+
+```text
+Payment using UPI
+Payment using Credit Card
+Payment using PayPal
+```
+
+## 6. How Does It Work?
+
+1. `Main` calls `PaymentFactory.createPayment("UPI")`.
+2. The factory checks the requested payment type.
+3. It creates and returns an appropriate object, such as `UPIPayment`.
+4. The returned object is stored in a `Payment` reference.
+5. Calling `payment.pay()` executes the implementation belonging to that object's actual class.
+
+The same process works for Credit Card and PayPal payments.
+
+## 7. Advantages
+
+- Centralizes object creation logic.
+- Reduces direct dependency on concrete classes in client code.
+- Makes it easier to manage different implementations behind a common interface.
+- Improves code organization and maintainability.
+
+## 8. Disadvantages
+
+- The factory can become large when many object types are added.
+- In this simple implementation, adding a new payment type requires modifying the factory.
+- It introduces an additional class to the application.
+
+## 9. Real-World Applications
+
+- Payment processing systems.
+- Database connection creation.
+- Notification systems such as Email, SMS, and Push notifications.
+- Logging frameworks.
+- File parsers for different formats.
+
+## 10. Key Takeaway
+
+**The Factory Design Pattern separates object creation from object usage.**
+
+The client asks the factory for an object and uses the common interface without needing to construct the concrete implementation itself.
+
+**Note:** This example demonstrates the Simple Factory idiom. It is commonly taught as a factory pattern, but it is distinct from the GoF Factory Method and Abstract Factory patterns.
